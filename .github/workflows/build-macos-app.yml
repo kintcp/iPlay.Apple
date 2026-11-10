@@ -132,8 +132,12 @@ jobs:
           platform: "MAC_OS"
       
       - name: 👀 Print Version
+        id: info
         run: |
           echo "Bumped version: ${{ steps.bump.outputs.old-version }} -> ${{ steps.bump.outputs.new-version }}"
+          # write git commit count for build number to GITHUB_ENV so it can be used in later steps
+          echo "GIT_COMMIT_COUNT=$(git rev-list --count HEAD)" >> "$GITHUB_ENV"
+          echo "GIT_COMMIT_HASH=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
 
       - name: 📦 Archive and Export for App Store
         id: build
@@ -149,7 +153,7 @@ jobs:
           disable-automatic-package-resolution: false
           # run_attempt makes a re-run upload a new, higher build instead of
           # being rejected as a duplicate.
-          build-number: ${{ github.run_number }}.${{ github.run_attempt }}
+          build-number: ${{ steps.info.outputs.GIT_COMMIT_COUNT }}.${{ github.run_attempt }}
           authentication-key-path: ${{ steps.setup.outputs.auth-key-path }}
           authentication-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
           authentication-key-issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
