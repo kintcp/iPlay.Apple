@@ -11,7 +11,7 @@ on:
 concurrency:
   group: ${{ github.ref }}-macos
   # Don't cancel a release run halfway through uploading or notarizing.
-  cancel-in-progress: ${{ github.ref != 'refs/heads/prod' }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -178,7 +178,7 @@ jobs:
           wait-for-processing: false
 
       - name: 📦 Archive and Export for Distribution
-        id: devbuild
+        id: devid
         uses: saltpi/xcodebuild@main
         with:
           project: iPlay.xcodeproj
@@ -192,20 +192,16 @@ jobs:
           # run_attempt makes a re-run upload a new, higher build instead of
           # being rejected as a duplicate.
           build-number: ${{ steps.info.outputs.git-commit-count }}.${{ github.run_attempt }}
-          authentication-key-path: ${{ steps.setup.outputs.auth-key-path }}
-          authentication-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
-          authentication-key-issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
-          allow-provisioning-updates: true
 
-      - name: 🔏 Export Developer ID
-        id: devid
-        uses: saltpi/xcodebuild@main
-        with:
-          scheme: iPlay.MacOS.DMG
-          action: export
-          archive-path: ${{ steps.devbuild.outputs.archive-path }}
-          export-options-plist: .meta/config/macos/export.options.developer-id.plist
-          export-path: .build/Artifacts/developer-id
+      # - name: 🔏 Export Developer ID
+      #   id: devid
+      #   uses: saltpi/xcodebuild@main
+      #   with:
+      #     scheme: iPlay.MacOS.DMG
+      #     action: export
+      #     archive-path: ${{ steps.devbuild.outputs.archive-path }}
+      #     export-options-plist: .meta/config/macos/export.options.developer-id.plist
+      #     export-path: .build/Artifacts/developer-id
 
       - name: 💿 Create DMG
         id: dmg
