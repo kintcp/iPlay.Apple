@@ -121,6 +121,20 @@ jobs:
           api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
           api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
 
+      - name: 🔢 Bump Marketing Version
+        id: bump
+        uses: saltpi/bump-marketing-version@main
+        with:
+          issuer-id: ${{ vars.APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ vars.APPSTORE_API_KEY_ID }}
+          api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+          version-file: .meta/config/version.xcconfig
+          platform: "MAC_OS"
+      
+      - name: 👀 Print Version
+        run: |
+          echo "Bumped version: ${{ steps.bump.outputs.old-version }} -> ${{ steps.bump.outputs.new-version }}"
+
       - name: 📦 Archive and Export for App Store
         id: build
         uses: saltpi/xcodebuild@main
