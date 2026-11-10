@@ -177,13 +177,33 @@ jobs:
           api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
           wait-for-processing: false
 
+      - name: 📦 Archive and Export for Distribution
+        id: devbuild
+        uses: saltpi/xcodebuild@main
+        with:
+          project: iPlay.xcodeproj
+          scheme: iPlay.MacOS.DMG
+          sdk: macosx
+          action: archive
+          archive-path: .build/Artifacts/iPlay.MacOS.DMG.xcarchive
+          export-options-plist: .meta/config/macos/export.options.developer-id.plist
+          export-path: .build/Artifacts/developer-id
+          disable-automatic-package-resolution: false
+          # run_attempt makes a re-run upload a new, higher build instead of
+          # being rejected as a duplicate.
+          build-number: ${{ steps.info.outputs.git-commit-count }}.${{ github.run_attempt }}
+          authentication-key-path: ${{ steps.setup.outputs.auth-key-path }}
+          authentication-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
+          authentication-key-issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          allow-provisioning-updates: true
+
       - name: 🔏 Export Developer ID
         id: devid
         uses: saltpi/xcodebuild@main
         with:
           scheme: iPlay.MacOS.DMG
           action: export
-          archive-path: ${{ steps.build.outputs.archive-path }}
+          archive-path: ${{ steps.devbuild.outputs.archive-path }}
           export-options-plist: .meta/config/macos/export.options.developer-id.plist
           export-path: .build/Artifacts/developer-id
 
