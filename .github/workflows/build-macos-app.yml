@@ -125,8 +125,8 @@ jobs:
         id: bump
         uses: saltpi/bump-marketing-version@main
         with:
-          issuer-id: ${{ vars.APPSTORE_ISSUER_ID }}
-          api-key-id: ${{ vars.APPSTORE_API_KEY_ID }}
+          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
           api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
           version-file: .meta/config/version.xcconfig
           platform: "MAC_OS"
