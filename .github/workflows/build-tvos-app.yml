@@ -98,6 +98,7 @@ jobs:
           CURRENT_PROJECT_VERSION: ${{ github.run_number }}
           PRODUCT_BUNDLE_IDENTIFIER: "top.ourfor.app.iPlayClient"
         with:
+          app-type: "appletvos"
           app-path: ".build/Artifacts/iPlay.ipa/iPlay.ipa"
           issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
           api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
