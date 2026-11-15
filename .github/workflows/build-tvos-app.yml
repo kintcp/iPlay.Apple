@@ -64,6 +64,7 @@ jobs:
           zip-result-bundle: true
 
       - name: 📦 Build Signed
+        id: build
         if: github.ref == 'refs/heads/prod'
         uses: saltpi/xcodebuild@main
         with:
@@ -99,7 +100,7 @@ jobs:
           PRODUCT_BUNDLE_IDENTIFIER: "top.ourfor.app.iPlayClient"
         with:
           app-type: "appletvos"
-          app-path: ".build/Artifacts/iPlay.ipa/iPlay.ipa"
+          app-path: ${{ steps.build.outputs.ipa-path }}
           issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
           api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
           api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
